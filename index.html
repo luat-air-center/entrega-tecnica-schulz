@@ -2122,7 +2122,7 @@
         </div>
 
         <!-- Section 2: Technical Specifications -->
-        <div class="card" id="specsCard cardSection2" style="display: none;">
+        <div class="card" id="specsCard" data-section="2" style="display: none;">
             <div class="card-header">
                 <div class="card-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3962,9 +3962,10 @@
 
                 const dados = JSON.parse(dadosSalvos);
                 const dataRascunho = new Date(dados.dataHora).toLocaleString('pt-BR');
-                
+
                 if (confirm(`Carregar rascunho salvo em ${dataRascunho}?\n\nProtocolo: ${dados.protocolo}\nCliente: ${dados.campos.cliente || '(não informado)'}`)) {
                     preencherFormulario(dados);
+                    reaplicarMascaras();
                     mostrarStatus('✓ Rascunho carregado com sucesso!', 'success');
                 }
             } catch (e) {
@@ -4590,6 +4591,7 @@ LUAT Air Center
                 }
 
                 atualizarEspecificacoes();
+                reaplicarMascaras();
                 setTimeout(() => {
                     mostrarStatus('✅ Dados carregados! Complete o checklist, registre as fotos e assine.', 'success');
                 }, 500);
@@ -4984,6 +4986,8 @@ _PDF em anexo._`;
         function aplicarMascara(id, fn) {
             const el = document.getElementById(id);
             if (!el) return;
+            // Formatar valor já presente (ex: carregado via URL ou rascunho)
+            if (el.value) el.value = fn(el.value);
             el.addEventListener('input', function(e) {
                 const pos = this.selectionStart;
                 const antes = this.value.length;
@@ -4991,6 +4995,16 @@ _PDF em anexo._`;
                 const depois = this.value.length;
                 this.setSelectionRange(pos + (depois - antes), pos + (depois - antes));
             });
+        }
+
+        // Reaplicar máscaras após carregamento de URL/rascunho
+        function reaplicarMascaras() {
+            const cnpj = document.getElementById('cnpj');
+            const tel  = document.getElementById('telefone');
+            const cpf  = document.getElementById('cpfCliente');
+            if (cnpj && cnpj.value) cnpj.value = mascaraCNPJ(cnpj.value);
+            if (tel  && tel.value)  tel.value  = mascaraTelefone(tel.value);
+            if (cpf  && cpf.value)  cpf.value  = mascaraCPF(cpf.value);
         }
 
         // --- 2. Barra de progresso (IntersectionObserver) ---
@@ -5007,7 +5021,7 @@ _PDF em anexo._`;
         function initProgressBar() {
             const sections = [
                 document.getElementById('cardSection1'),
-                document.getElementById('specsCard'),
+                document.querySelector('[data-section="2"]'),
                 document.getElementById('cardSection3'),
                 document.getElementById('cardSection4'),
                 document.getElementById('cardSection5'),
