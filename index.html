@@ -1925,6 +1925,167 @@
         .campo-valido   { border-color: var(--success) !important; }
         .campo-invalido { border-color: var(--danger) !important; }
 
+        /* 8. Tooltips nos campos técnicos */
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--gray-300);
+            color: var(--gray-700);
+            font-size: 10px;
+            font-weight: 700;
+            font-style: normal;
+            cursor: help;
+            position: relative;
+            vertical-align: middle;
+            margin-left: 4px;
+            transition: background 0.2s;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .tooltip-icon:hover { background: var(--primary); color: white; }
+        .tooltip-icon::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1E293B;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.5;
+            width: 240px;
+            text-align: left;
+            display: none;
+            z-index: 500;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            pointer-events: none;
+            white-space: normal;
+        }
+        .tooltip-icon::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1E293B;
+            display: none;
+            z-index: 501;
+        }
+        .tooltip-icon:hover::after,
+        .tooltip-icon:hover::before { display: block; }
+
+        /* 9. Validação inline */
+        .erro-inline {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* 10. Tela de confirmação pós-envio (Sprint 2) */
+        .modal-confirmacao {
+            background: white;
+            border-radius: 20px;
+            max-width: 420px;
+            width: 92%;
+            padding: 36px 28px 28px;
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+            animation: slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        .confirmacao-check {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), #059669);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 24px rgba(16,185,129,0.35);
+            animation: popIn 0.4s 0.15s both;
+        }
+        .confirmacao-titulo {
+            font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 6px;
+        }
+        .confirmacao-sub {
+            font-size: 14px; color: var(--gray-500); margin-bottom: 20px;
+        }
+        .confirmacao-protocolo {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--primary-light);
+            border: 1.5px solid var(--primary);
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+        }
+        .protocolo-label-conf {
+            font-size: 11px; font-weight: 600; color: var(--primary);
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .protocolo-valor-conf {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 14px; font-weight: 700; color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+        .btn-copiar-protocolo {
+            background: none; border: none; cursor: pointer;
+            color: var(--primary); padding: 2px; display: flex;
+            opacity: 0.7; transition: opacity 0.2s;
+        }
+        .btn-copiar-protocolo:hover { opacity: 1; }
+        .confirmacao-resumo {
+            background: var(--gray-100); border-radius: 10px;
+            padding: 14px 16px; margin-bottom: 16px; text-align: left;
+        }
+        .resumo-item {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 13px; padding: 4px 0;
+        }
+        .resumo-item:not(:last-child) { border-bottom: 1px solid var(--gray-200); padding-bottom: 8px; margin-bottom: 4px; }
+        .resumo-item span { color: var(--gray-500); }
+        .resumo-item strong { color: var(--dark); text-align: right; max-width: 60%; }
+        .confirmacao-instrucao {
+            background: #FFF4EC; border: 1px solid #FFD4AA;
+            border-radius: 8px; padding: 10px 14px; margin-bottom: 20px;
+        }
+        .confirmacao-instrucao p { font-size: 13px; color: #7C3D12; font-weight: 500; }
+        .confirmacao-btns {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
+        }
+        .btn-conf-pdf {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 14px; border: none; border-radius: 10px; font-size: 14px;
+            font-weight: 700; cursor: pointer; font-family: inherit;
+            background: #DC2626; color: white; transition: all 0.2s;
+        }
+        .btn-conf-pdf:hover { background: #B91C1C; transform: translateY(-1px); }
+        .btn-conf-whatsapp {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 14px; border: none; border-radius: 10px; font-size: 14px;
+            font-weight: 700; cursor: pointer; font-family: inherit;
+            background: #25D366; color: white; transition: all 0.2s;
+        }
+        .btn-conf-whatsapp:hover { background: #1DA851; transform: translateY(-1px); }
+        .btn-conf-fechar {
+            background: none; border: none; color: var(--gray-500);
+            font-size: 13px; cursor: pointer; font-family: inherit;
+            padding: 8px; text-decoration: underline;
+        }
+        .btn-conf-fechar:hover { color: var(--dark); }
+
     </style>
 </head>
 <body>
@@ -2040,7 +2201,7 @@
 
             <div class="form-row" style="margin-top: 24px;">
                 <div class="form-group">
-                    <label>Modelo do Compressor</label>
+                    <label>Modelo do Compressor <span class="tooltip-icon" data-tip="Encontre o modelo na plaqueta de identificação fixada no painel do compressor. Exemplo: SRP 4015E.">ⓘ</span></label>
                     <select id="modelo" onchange="atualizarEspecificacoes()">
                         <option value="">Selecione o modelo...</option>
                         <optgroup label="Linha SRP 4000 - Partida Direta">
@@ -2092,7 +2253,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Tensão de Alimentação</label>
+                    <label>Tensão de Alimentação <span class="tooltip-icon" data-tip="Verifique a tensão disponível no quadro elétrico com um multímetro ou consulte o eletricista. Instalar na tensão errada danifica o equipamento.">ⓘ</span></label>
                     <select id="tensao" onchange="atualizarEspecificacoes()">
                         <option value="">Selecione a tensão...</option>
                         <option value="220">220V Trifásico</option>
@@ -2166,7 +2327,7 @@
                 <!-- Campo de distância editável -->
                 <div class="distancia-input-container" id="distanciaContainer">
                     <div class="distancia-input-group">
-                        <label for="distanciaInstalacao">Distância do quadro elétrico ao compressor</label>
+                        <label for="distanciaInstalacao">Distância do quadro elétrico ao compressor <span class="tooltip-icon" data-tip="Meça em metros o trajeto do cabo desde os disjuntores/fusíveis até o compressor. Essa distância define a bitola mínima do cabo necessária.">ⓘ</span></label>
                         <div class="distancia-input-wrapper">
                             <input type="number" id="distanciaInstalacao" min="1" max="500" onchange="recalcularCabos()" oninput="recalcularCabos()">
                             <span class="distancia-unit">metros</span>
@@ -2616,33 +2777,6 @@
                         <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
                     </svg>
                     Enviar p/ Cliente
-                </button>
-            </div>
-            <div class="action-buttons-row action-buttons-main">
-                <button class="btn btn-secondary" onclick="imprimirComValidacao()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="6 9 6 2 18 2 18 9"/>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                        <rect x="6" y="14" width="12" height="8"/>
-                    </svg>
-                    Imprimir
-                </button>
-                <button class="btn btn-primary" onclick="gerarPDF()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                        <line x1="16" y1="13" x2="8" y2="13"/>
-                        <line x1="16" y1="17" x2="8" y2="17"/>
-                        <polyline points="10 9 9 9 8 9"/>
-                    </svg>
-                    Gerar PDF
-                </button>
-                <button class="btn btn-success" onclick="enviarParaLUAT()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="22" y1="2" x2="11" y2="13"/>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                    </svg>
-                    Enviar para LUAT
                 </button>
             </div>
             <div class="action-status" id="actionStatus"></div>
@@ -4030,17 +4164,43 @@
             'Exaustão'
         ];
 
+        // Validação inline — mostra/remove msg de erro embaixo do campo
+        function setErroInline(id, msg) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            // Remover erro anterior
+            const erroAnt = el.parentNode.querySelector('.erro-inline');
+            if (erroAnt) erroAnt.remove();
+            if (msg) {
+                el.style.borderColor = '#DC2626';
+                el.style.backgroundColor = '#FEF2F2';
+                const span = document.createElement('span');
+                span.className = 'erro-inline';
+                span.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> ${msg}`;
+                el.parentNode.insertBefore(span, el.nextSibling);
+                // Limpar erro quando o usuário preencher
+                const limpar = () => {
+                    if (el.value.trim()) { setErroInline(id, null); el.removeEventListener('input', limpar); el.removeEventListener('change', limpar); }
+                };
+                el.addEventListener('input', limpar);
+                el.addEventListener('change', limpar);
+            } else {
+                el.style.borderColor = '';
+                el.style.backgroundColor = '';
+            }
+        }
+
         function validarCamposObrigatorios() {
             const camposObrigatorios = [
-                { id: 'cliente', nome: 'Razão Social / Cliente' },
-                { id: 'cnpj', nome: 'CNPJ' },
-                { id: 'contato', nome: 'Contato Responsável' },
-                { id: 'telefone', nome: 'Telefone' },
-                { id: 'nf', nome: 'Nota Fiscal' },
-                { id: 'modelo', nome: 'Modelo do Compressor' },
-                { id: 'tensao', nome: 'Tensão' },
-                { id: 'local', nome: 'Local' },
-                { id: 'nomeCliente', nome: 'Nome do Responsável' }
+                { id: 'cliente', nome: 'Razão Social / Cliente', msg: 'Informe a razão social da empresa.' },
+                { id: 'cnpj',    nome: 'CNPJ',                   msg: 'Informe o CNPJ.' },
+                { id: 'contato', nome: 'Contato Responsável',    msg: 'Informe o nome do responsável.' },
+                { id: 'telefone',nome: 'Telefone',               msg: 'Informe o telefone de contato.' },
+                { id: 'nf',      nome: 'Nota Fiscal',            msg: 'Informe o número da nota fiscal.' },
+                { id: 'modelo',  nome: 'Modelo do Compressor',   msg: 'Selecione o modelo do compressor.' },
+                { id: 'tensao',  nome: 'Tensão',                 msg: 'Selecione a tensão de alimentação.' },
+                { id: 'local',   nome: 'Local',                  msg: 'Informe a cidade/UF de instalação.' },
+                { id: 'nomeCliente', nome: 'Nome do Responsável',msg: 'Informe o nome de quem vai assinar.' }
             ];
 
             const resultado = {
@@ -4049,20 +4209,13 @@
                 fotosFaltando: []
             };
 
-            // Validar campos de texto
             camposObrigatorios.forEach(campo => {
                 const elemento = document.getElementById(campo.id);
                 if (!elemento || !elemento.value.trim()) {
                     resultado.camposFaltando.push(campo.nome);
-                    if (elemento) {
-                        elemento.style.borderColor = '#DC2626';
-                        elemento.style.backgroundColor = '#FEF2F2';
-                    }
+                    setErroInline(campo.id, campo.msg);
                 } else {
-                    if (elemento) {
-                        elemento.style.borderColor = '';
-                        elemento.style.backgroundColor = '';
-                    }
+                    setErroInline(campo.id, null);
                 }
             });
 
@@ -4081,20 +4234,24 @@
 
         function montarMensagemValidacao(resultado) {
             let mensagem = '';
-
             if (resultado.camposFaltando.length > 0) {
                 mensagem += '📋 CAMPOS OBRIGATÓRIOS:\n• ' + resultado.camposFaltando.join('\n• ') + '\n\n';
             }
-
             if (resultado.checklistFaltando.length > 0) {
                 mensagem += '☑️ CHECKLIST NÃO MARCADOS (' + resultado.checklistFaltando.length + ' de ' + checklistNomes.length + '):\n• ' + resultado.checklistFaltando.join('\n• ') + '\n\n';
             }
-
             if (resultado.fotosFaltando && resultado.fotosFaltando.length > 0) {
                 mensagem += '📷 FOTOS NÃO ADICIONADAS (' + resultado.fotosFaltando.length + ' de 6):\n• ' + resultado.fotosFaltando.join('\n• ') + '\n\n';
             }
-
             return mensagem;
+        }
+
+        // Rolar até o primeiro campo com erro após validação
+        function rolarParaPrimeiroErro() {
+            const erros = document.querySelectorAll('.erro-inline');
+            if (erros.length > 0) {
+                erros[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         // ===== GERENCIAMENTO DE FOTOS =====
@@ -4215,6 +4372,7 @@
 
             if (temPendencias) {
                 const mensagem = montarMensagemValidacao(resultado) + 'Deseja imprimir mesmo assim?';
+                rolarParaPrimeiroErro();
                 if (!confirm(mensagem)) {
                     mostrarStatus('Verifique os itens pendentes antes de imprimir.', 'error');
                     return;
@@ -4237,6 +4395,7 @@
 
             if (temPendencias) {
                 const mensagem = montarMensagemValidacao(resultado) + 'Deseja gerar o PDF mesmo assim?';
+                rolarParaPrimeiroErro();
                 if (!confirm(mensagem)) {
                     mostrarStatus('Verifique os itens pendentes antes de gerar o PDF.', 'error');
                     return;
@@ -4852,86 +5011,95 @@ LUAT Air Center
 _Documento assinado digitalmente em ${dados.dataAssinatura}_
 _PDF em anexo._`;
 
-            // Criar modal de envio
-            const modalHtml = `
-                <div class="modal-overlay" id="modalEnvio" onclick="fecharModalEnvio(event)">
-                    <div class="modal-content" onclick="event.stopPropagation()">
-                        <div class="modal-header">
-                            <h3>📤 Enviar para LUAT</h3>
-                            <button class="modal-close" onclick="fecharModalEnvio()">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <p style="margin-bottom: 16px; color: #666;">
-                                ✅ Dados registrados com sucesso! Agora gere o PDF e envie para a LUAT:
-                            </p>
-                            
-                            <div class="envio-opcoes">
-                                <button class="btn-envio pdf" onclick="gerarPDFeFechar()" style="background: #dc2626;">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <polyline points="14 2 14 8 20 8"/>
-                                        <line x1="16" y1="13" x2="8" y2="13"/>
-                                        <line x1="16" y1="17" x2="8" y2="17"/>
-                                    </svg>
-                                    1. Gerar PDF
-                                </button>
-                                
-                                <button class="btn-envio whatsapp" onclick="enviarWhatsAppLUAT()">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                                    </svg>
-                                    2. Enviar via WhatsApp
-                                </button>
-                                
-                                <button class="btn-envio print" onclick="imprimirEFechar()" style="background: #6b7280;">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="6 9 6 2 18 2 18 9"/>
-                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                                        <rect x="6" y="14" width="12" height="8"/>
-                                    </svg>
-                                    Imprimir
-                                </button>
-                            </div>
-                            
-                            <div class="envio-instrucao">
-                                <p>📧 <strong>E-mail:</strong> orcamento@luat-aircenter.com.br</p>
-                                <p>📞 <strong>WhatsApp:</strong> (17) 99703-5317</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
             // Remover modal anterior se existir
             const modalAntigo = document.getElementById('modalEnvio');
             if (modalAntigo) modalAntigo.remove();
-            
-            // Adicionar modal
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
+
             // Armazenar mensagem para uso posterior
             window.mensagemEnvio = mensagem;
             window.dadosEnvio = dados;
-            
+
+            // Sprint 2: Tela de confirmação redesenhada
+            mostrarTelaConfirmacao(dados.protocolo, dados.cliente, dados.modelo, dados.tensao);
             mostrarStatus('✅ Dados registrados! Gere o PDF e envie para a LUAT.', 'success');
         }
-        
+
+        // Sprint 2 — Tela de confirmação pós-envio
+        function mostrarTelaConfirmacao(protocolo, cliente, modelo, tensao) {
+            const modalHtml = `
+                <div class="modal-overlay" id="modalEnvio" onclick="fecharModalEnvio(event)">
+                    <div class="modal-confirmacao" onclick="event.stopPropagation()">
+
+                        <!-- Ícone de sucesso animado -->
+                        <div class="confirmacao-check">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+
+                        <h2 class="confirmacao-titulo">Formulário Enviado!</h2>
+                        <p class="confirmacao-sub">Dados registrados com sucesso na LUAT.</p>
+
+                        <!-- Protocolo em destaque -->
+                        <div class="confirmacao-protocolo">
+                            <span class="protocolo-label-conf">Protocolo</span>
+                            <span class="protocolo-valor-conf">${protocolo}</span>
+                            <button class="btn-copiar-protocolo" onclick="copiarTexto('${protocolo}', this)" title="Copiar protocolo">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Resumo -->
+                        <div class="confirmacao-resumo">
+                            <div class="resumo-item"><span>Cliente</span><strong>${cliente || '—'}</strong></div>
+                            <div class="resumo-item"><span>Equipamento</span><strong>${modelo || '—'}</strong></div>
+                            ${tensao ? `<div class="resumo-item"><span>Tensão</span><strong>${tensao}V</strong></div>` : ''}
+                        </div>
+
+                        <!-- Próximo passo -->
+                        <div class="confirmacao-instrucao">
+                            <p>Agora gere o PDF e envie para a LUAT via WhatsApp:</p>
+                        </div>
+
+                        <!-- Botões de ação -->
+                        <div class="confirmacao-btns">
+                            <button class="btn-conf-pdf" onclick="gerarPDFeFechar()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                1. Gerar PDF
+                            </button>
+                            <button class="btn-conf-whatsapp" onclick="enviarWhatsAppLUAT()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                2. WhatsApp LUAT
+                            </button>
+                        </div>
+
+                        <button class="btn-conf-fechar" onclick="fecharModalEnvio()">Fechar</button>
+                    </div>
+                </div>`;
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function copiarTexto(texto, btn) {
+            navigator.clipboard.writeText(texto).then(() => {
+                btn.innerHTML = '✅';
+                setTimeout(() => {
+                    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+                }, 2000);
+            });
+        }
+
         function fecharModalEnvio(event) {
             if (event && event.target !== event.currentTarget) return;
             const modal = document.getElementById('modalEnvio');
             if (modal) modal.remove();
         }
-        
+
         function gerarPDFeFechar() {
             fecharModalEnvio();
             gerarPDF();
         }
-        
-        function imprimirEFechar() {
-            fecharModalEnvio();
-            window.print();
-        }
-        
+
         function enviarWhatsAppLUAT() {
             const telefone = '5517997035317';
             const mensagem = encodeURIComponent(window.mensagemEnvio);
@@ -5127,6 +5295,22 @@ _PDF em anexo._`;
             aplicarMascara('cnpj', mascaraCNPJ);
             aplicarMascara('telefone', mascaraTelefone);
             aplicarMascara('cpfCliente', mascaraCPF);
+
+            // Sprint 2: validação inline ao sair do campo (blur)
+            const camposBlur = [
+                { id: 'cliente',    msg: 'Informe a razão social da empresa.' },
+                { id: 'contato',    msg: 'Informe o nome do responsável.' },
+                { id: 'telefone',   msg: 'Informe o telefone de contato.' },
+                { id: 'nf',         msg: 'Informe o número da nota fiscal.' },
+                { id: 'nomeCliente',msg: 'Informe o nome de quem vai assinar.' },
+                { id: 'local',      msg: 'Informe a cidade/UF de instalação.' },
+            ];
+            camposBlur.forEach(({ id, msg }) => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('blur', () => {
+                    if (!el.value.trim()) setErroInline(id, msg);
+                });
+            });
 
             // Sprint 1: barra de progresso
             initProgressBar();
