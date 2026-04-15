@@ -4486,19 +4486,19 @@ LUAT Air Center
         }
         
         function prepararAssinaturasParaImpressao() {
-            ['Cliente', 'Tecnico'].forEach(tipo => {
-                const canvas = document.getElementById('assinatura' + tipo);
-                const img = document.getElementById('imgAssinatura' + tipo);
-                
-                if (assinaturasData[tipo]) {
-                    img.src = assinaturasData[tipo];
+            const canvas = document.getElementById('assinaturaCliente');
+            const img = document.getElementById('imgAssinaturaCliente');
+            
+            if (canvas && img) {
+                if (assinaturasData.Cliente) {
+                    img.src = assinaturasData.Cliente;
                     img.style.display = 'block';
                     canvas.style.display = 'none';
                 } else {
                     img.style.display = 'none';
                     canvas.style.display = 'block';
                 }
-            });
+            }
         }
 
         // ===== GOOGLE SHEETS INTEGRATION =====
@@ -4548,9 +4548,9 @@ LUAT Air Center
                 cpfCliente: document.getElementById('cpfCliente')?.value || '',
                 assinaturaCliente: assinaturasData.Cliente ? 'SIM' : 'NÃO',
                 
-                nomeTecnico: document.getElementById('nomeTecnico').value,
-                matriculaTecnico: document.getElementById('matriculaTecnico').value,
-                assinaturaTecnico: assinaturasData.Tecnico ? 'SIM' : 'NÃO',
+                nomeTecnico: '',
+                matriculaTecnico: '',
+                assinaturaTecnico: 'N/A',
                 
                 // Status
                 status: 'ENVIADO'
