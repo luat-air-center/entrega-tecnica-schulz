@@ -1722,10 +1722,253 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* ===== SPRINT 1: MELHORIAS UX ===== */
+
+        /* 1. Barra de progresso sticky */
+        .progress-bar-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: white;
+            border-bottom: 2px solid var(--gray-100);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 10px 20px;
+        }
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+            position: relative;
+        }
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: calc(50% + 14px);
+            right: calc(-50% + 14px);
+            height: 2px;
+            background: var(--gray-300);
+            transition: background 0.3s;
+        }
+        .step-item.done:not(:last-child)::after { background: var(--success); }
+        .step-item.active:not(:last-child)::after { background: var(--gray-300); }
+        .step-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-300);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-500);
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+        .step-item.active .step-dot {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        .step-item.done .step-dot {
+            border-color: var(--success);
+            background: var(--success);
+            color: white;
+        }
+        .step-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .step-item.active .step-label { color: var(--primary); }
+        .step-item.done .step-label   { color: var(--success); }
+
+        /* 2. FAB flutuante */
+        .fab-enviar {
+            position: fixed;
+            bottom: -90px;
+            right: 24px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 24px;
+            font-size: 15px;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(16,185,129,0.45);
+            transition: bottom 0.35s cubic-bezier(0.34,1.56,0.64,1), transform 0.15s;
+            z-index: 999;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+        .fab-enviar.visible { bottom: 24px; }
+        .fab-enviar:hover   { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(16,185,129,0.55); }
+        .fab-enviar:active  { transform: translateY(0); }
+
+        /* 3. Seção concluída */
+        .card-header.section-done {
+            border-bottom-color: var(--success) !important;
+        }
+        .card-header.section-done .card-title { color: var(--success); }
+        .section-done-badge {
+            margin-left: auto;
+            background: var(--success);
+            color: white;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            0%   { transform: scale(0.5); opacity: 0; }
+            70%  { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* 4. Autosave indicator */
+        .autosave-indicator {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.4s;
+            z-index: 998;
+            pointer-events: none;
+        }
+        .autosave-indicator.visible { opacity: 1; }
+
+        /* 5. Canvas assinatura maior em mobile */
+        @media (max-width: 768px) {
+            .signature-canvas { height: 180px !important; }
+        }
+
+        /* 6. Lightbox fotos */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 16px;
+        }
+        .lightbox-overlay img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+        .lightbox-titulo {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+        }
+        .lightbox-btns {
+            display: flex;
+            gap: 12px;
+        }
+        .lightbox-btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .lightbox-btn-refazer {
+            background: #EF4444;
+            color: white;
+        }
+        .lightbox-btn-ok {
+            background: var(--success);
+            color: white;
+        }
+
+        /* 7. Máscara de campos — feedback de digitação */
+        .campo-valido   { border-color: var(--success) !important; }
+        .campo-invalido { border-color: var(--danger) !important; }
+
     </style>
 </head>
 <body>
+    <!-- FAB flutuante -->
+    <button class="fab-enviar" id="fabEnviar" onclick="enviarParaLUAT()" style="display:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+        Enviar para LUAT
+    </button>
+
+    <!-- Autosave indicator -->
+    <div class="autosave-indicator" id="autosaveIndicator">💾 Salvo</div>
+
     <div class="container">
+        <!-- Barra de progresso sticky -->
+        <div class="progress-bar-sticky" id="progressBarSticky">
+            <div class="progress-steps">
+                <div class="step-item active" id="step1">
+                    <div class="step-dot">1</div>
+                    <span class="step-label">Dados</span>
+                </div>
+                <div class="step-item" id="step2">
+                    <div class="step-dot">2</div>
+                    <span class="step-label">Specs</span>
+                </div>
+                <div class="step-item" id="step3">
+                    <div class="step-dot">3</div>
+                    <span class="step-label">Checklist</span>
+                </div>
+                <div class="step-item" id="step4">
+                    <div class="step-dot">4</div>
+                    <span class="step-label">Fotos</span>
+                </div>
+                <div class="step-item" id="step5">
+                    <div class="step-dot">5</div>
+                    <span class="step-label">Orient.</span>
+                </div>
+                <div class="step-item" id="step6">
+                    <div class="step-dot">6</div>
+                    <span class="step-label">Aceite</span>
+                </div>
+            </div>
+        </div>
         <!-- Header -->
         <div class="header">
             <div class="header-content">
@@ -1750,7 +1993,7 @@
         </div>
 
         <!-- Section 1: Client & Equipment -->
-        <div class="card">
+        <div class="card" id="cardSection1">
             <div class="card-header">
                 <div class="card-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1879,7 +2122,7 @@
         </div>
 
         <!-- Section 2: Technical Specifications -->
-        <div class="card" id="specsCard" style="display: none;">
+        <div class="card" id="specsCard cardSection2" style="display: none;">
             <div class="card-header">
                 <div class="card-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1969,7 +2212,7 @@
         </div>
 
         <!-- Section 3: Pre-Startup Checklist -->
-        <div class="card">
+        <div class="card" id="cardSection3">
             <div class="card-header">
                 <div class="card-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1980,8 +2223,7 @@
                 <span class="card-title">Checklist de Pré-Instalação</span>
                 <span class="card-number">3</span>
             </div>
-
-            <div class="checklist-clean">
+            <div class="checklist-clean" id="checklistGrid">
                 <label class="check-item">
                     <input type="checkbox">
                     <div class="check-box">
@@ -2065,7 +2307,7 @@
         </div>
 
         <!-- Section 4: Required Photos with Upload -->
-        <div class="card">
+        <div class="card" id="cardSection4">
             <div class="card-header">
                 <div class="card-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2077,8 +2319,7 @@
                 <span class="card-title">Registro Fotográfico Obrigatório</span>
                 <span class="card-number">4</span>
             </div>
-
-            <div class="photo-grid">
+            <div class="photo-grid" id="photoGrid">
                 <div class="photo-upload-item" data-foto="ambiente">
                     <input type="file" accept="image/*" capture="environment" id="fotoAmbiente" onchange="handleFotoUpload(this, 'ambiente')">
                     <label for="fotoAmbiente" class="photo-upload-label">
@@ -2177,7 +2418,7 @@
         </div>
 
         <!-- Section 5: Installation Guidelines -->
-        <div class="card">
+        <div class="card" id="cardSection5">
             <div class="card-header">
                 <div class="card-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2272,7 +2513,7 @@
         </div>
 
         <!-- Section 6: Signatures with Digital Signature -->
-        <div class="card">
+        <div class="card" id="cardSection6">
             <div class="card-header">
                 <div class="card-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3877,25 +4118,33 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64 = e.target.result;
-                
-                // Armazenar dados
-                fotosData[tipo] = {
-                    base64: base64,
-                    name: file.name,
-                    size: file.size,
-                    type: file.type
-                };
 
-                // Atualizar preview
-                const preview = document.getElementById('preview' + tipo.charAt(0).toUpperCase() + tipo.slice(1));
-                const item = preview.closest('.photo-upload-item');
-                
-                preview.innerHTML = `<img src="${base64}" alt="${tipo}">`;
-                preview.classList.add('has-photo');
-                item.classList.add('has-photo');
+                // Comprimir imagem antes de armazenar (Canvas API, sem lib externa)
+                comprimirImagem(base64, function(b64Comprimido) {
+                    fotosData[tipo] = {
+                        base64: b64Comprimido,
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    };
 
-                // Atualizar contador
-                atualizarContadorFotos();
+                    // Atualizar preview
+                    const previewId = 'preview' + tipo.charAt(0).toUpperCase() + tipo.slice(1);
+                    const preview = document.getElementById(previewId);
+                    const item = preview.closest('.photo-upload-item');
+
+                    preview.innerHTML = `<img src="${b64Comprimido}" alt="${tipo}" style="cursor:pointer;" onclick="abrirLightboxFoto('${b64Comprimido}','${tipo}','${tipo.charAt(0).toUpperCase()+tipo.slice(1)}')">`;
+                    preview.classList.add('has-photo');
+                    item.classList.add('has-photo');
+
+                    // Abrir lightbox para confirmação
+                    const nomesAmigaveis = {ambiente:'Ambiente',seccionadora:'Seccionadora',fusiveis:'Fusíveis',cabos:'Cabos',notafiscal:'Nota Fiscal',exaustao:'Exaustão'};
+                    abrirLightboxFoto(b64Comprimido, tipo, nomesAmigaveis[tipo] || tipo);
+
+                    // Atualizar contador e barra de progresso
+                    atualizarContadorFotos();
+                    if (Object.keys(fotosData).length >= 5) ativarPasso(4, true);
+                });
             };
             reader.readAsDataURL(file);
         }
@@ -4011,10 +4260,11 @@
             return `ET${ano}${mes}${dia}-${hora}${min}${seg}-${random}`;
         }
 
-        // Checkbox visual feedback
+        // Checkbox visual feedback + feedback de seção concluída
         document.querySelectorAll('.check-item input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 this.closest('.check-item').classList.toggle('checked', this.checked);
+                verificarChecklistCompleto();
             });
         });
 
@@ -4052,9 +4302,28 @@
             atualizarEspecificacoes();
         });
 
-        // ===== FUNÇÃO DE COMPARTILHAMENTO =====
+        // ===== FUNÇÃO DE COMPARTILHAMENTO (LINK OTIMIZADO) =====
+        // Encoding posicional: array de 11 valores em ordem fixa, separados por \x01
+        // Elimina encodeURIComponent dos valores e prefixos de chave → ~21% menor
+        const CAMPOS_LINK = ['c','j','n','t','e','f','m','v','i','p','d'];
+
+        function encoderLinkOtimizado(dados) {
+            const vals = CAMPOS_LINK.map(k => (dados[k] || '')).join('\x01');
+            // base64url sem padding
+            return btoa(unescape(encodeURIComponent(vals)))
+                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+
+        function decoderLinkOtimizado(b64) {
+            let padded = b64.replace(/-/g, '+').replace(/_/g, '/');
+            while (padded.length % 4) padded += '=';
+            const vals = decodeURIComponent(escape(atob(padded))).split('\x01');
+            const obj = {};
+            CAMPOS_LINK.forEach((k, i) => { if (vals[i]) obj[k] = vals[i]; });
+            return obj;
+        }
+
         function gerarLinkCompartilhamento() {
-            // Coletar dados do formulário - usar chaves curtas
             const dados = {
                 c: document.getElementById('cliente').value.trim(),
                 j: document.getElementById('cnpj').value.trim(),
@@ -4069,29 +4338,13 @@
                 d: document.getElementById('distanciaInstalacao').value
             };
 
-            // Verificar se há dados mínimos
             if (!dados.c && !dados.m) {
                 alert('Preencha pelo menos o nome do cliente ou modelo do equipamento para gerar o link.');
                 return;
             }
 
-            // Remover campos vazios para reduzir tamanho
-            Object.keys(dados).forEach(k => {
-                if (!dados[k]) delete dados[k];
-            });
+            const dadosBase64 = encoderLinkOtimizado(dados);
 
-            // Codificar dados de forma compacta
-            // Formato: c=valor|j=valor|m=valor (pipe separado, sem JSON)
-            const dadosCompactos = Object.entries(dados)
-                .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
-                .join('|');
-            
-            // Comprimir usando LZString-like simples (Base64 com substituições)
-            const dadosBase64 = btoa(unescape(encodeURIComponent(dadosCompactos)))
-                .replace(/\+/g, '-')
-                .replace(/\//g, '_')
-                .replace(/=+$/, ''); // Remove padding
-            
             // Gerar URL com parâmetro curto
             const urlAtual = window.location.href.split('?')[0].split('#')[0];
             const urlCompartilhamento = `${urlAtual}?d=${dadosBase64}`;
@@ -4290,97 +4543,59 @@ LUAT Air Center
         // Carregar dados da URL ao abrir a página
         function carregarDadosURL() {
             const urlParams = new URLSearchParams(window.location.search);
-            
-            // Tentar novo formato compacto (d=)
-            let dadosBase64 = urlParams.get('d');
-            let formatoAntigo = false;
-            
-            // Fallback para formato antigo (dados=)
-            if (!dadosBase64) {
-                dadosBase64 = urlParams.get('dados');
-                formatoAntigo = true;
-            }
-            
-            if (dadosBase64) {
+            const dadosBase64 = urlParams.get('d') || urlParams.get('dados');
+            if (!dadosBase64) return;
+
+            try {
+                let dados;
+
+                // Tentar novo formato posicional (separador \x01)
                 try {
-                    // Restaurar Base64 padrão
+                    dados = decoderLinkOtimizado(dadosBase64);
+                    // Verificar se deu certo (formato posicional retorna chave 'c')
+                    if (!dados.c && !dados.m) throw new Error('fallback');
+                } catch(_) {
+                    // Fallback: formato antigo pipe-separado
                     let base64Padded = dadosBase64.replace(/-/g, '+').replace(/_/g, '/');
                     while (base64Padded.length % 4) base64Padded += '=';
-                    
-                    const dadosDecodificados = decodeURIComponent(escape(atob(base64Padded)));
-                    
-                    let dados;
-                    
-                    if (formatoAntigo) {
-                        // Formato JSON antigo
-                        dados = JSON.parse(dadosDecodificados);
+                    const dec = decodeURIComponent(escape(atob(base64Padded)));
+                    dados = {};
+                    if (dec.startsWith('{')) {
+                        // JSON puro (formato muito antigo)
+                        const j = JSON.parse(dec);
+                        const mapa = {c:'c',cliente:'c',j:'j',cnpj:'j',n:'n',contato:'n',t:'t',telefone:'t',e:'e',email:'e',f:'f',nf:'f',m:'m',modelo:'m',v:'v',tensao:'v',i:'i',marcaInversor:'i',p:'p',d:'d'};
+                        Object.entries(j).forEach(([k,v]) => { if (mapa[k]) dados[mapa[k]] = v; });
                     } else {
-                        // Novo formato compacto: c=valor|j=valor|m=valor
-                        dados = {};
-                        dadosDecodificados.split('|').forEach(par => {
-                            const [chave, valor] = par.split('=');
-                            if (chave && valor !== undefined) {
-                                dados[chave] = decodeURIComponent(valor);
-                            }
+                        dec.split('|').forEach(par => {
+                            const eq = par.indexOf('=');
+                            if (eq > 0) dados[par.slice(0,eq)] = decodeURIComponent(par.slice(eq+1));
                         });
                     }
-                    
-                    // Mapeamento de chaves curtas para campos
-                    const mapa = {
-                        c: 'cliente', cliente: 'cliente',
-                        j: 'cnpj', cnpj: 'cnpj',
-                        n: 'contato', contato: 'contato',
-                        t: 'telefone', telefone: 'telefone',
-                        e: 'email', email: 'email',
-                        f: 'nf', nf: 'nf',
-                        m: 'modelo', modelo: 'modelo',
-                        v: 'tensao', tensao: 'tensao',
-                        i: 'marcaInversor', marcaInversor: 'marcaInversor',
-                        p: 'protecaoMitsubishi', protecaoMitsubishi: 'protecaoMitsubishi',
-                        d: 'distancia', distancia: 'distancia'
-                    };
-                    
-                    // Normalizar dados para chaves completas
-                    const dadosNormalizados = {};
-                    Object.entries(dados).forEach(([k, v]) => {
-                        const chaveFinal = mapa[k] || k;
-                        dadosNormalizados[chaveFinal] = v;
-                    });
-                    
-                    // Preencher campos
-                    if (dadosNormalizados.cliente) document.getElementById('cliente').value = dadosNormalizados.cliente;
-                    if (dadosNormalizados.cnpj) document.getElementById('cnpj').value = dadosNormalizados.cnpj;
-                    if (dadosNormalizados.contato) document.getElementById('contato').value = dadosNormalizados.contato;
-                    if (dadosNormalizados.telefone) document.getElementById('telefone').value = dadosNormalizados.telefone;
-                    if (dadosNormalizados.email) document.getElementById('email').value = dadosNormalizados.email;
-                    if (dadosNormalizados.nf) document.getElementById('nf').value = dadosNormalizados.nf;
-                    if (dadosNormalizados.modelo) {
-                        document.getElementById('modelo').value = dadosNormalizados.modelo;
-                        atualizarMarcasInversor(dadosNormalizados.modelo);
-                    }
-                    if (dadosNormalizados.tensao) document.getElementById('tensao').value = dadosNormalizados.tensao;
-                    if (dadosNormalizados.marcaInversor) {
-                        document.getElementById('marcaInversor').value = dadosNormalizados.marcaInversor;
-                        // Mostrar campo de proteção Mitsubishi se necessário
-                        const isLinha5000Flex = dadosNormalizados.modelo && dadosNormalizados.modelo.startsWith('SRP5') && dadosNormalizados.modelo.includes('FLEX');
-                        if (isLinha5000Flex && dadosNormalizados.marcaInversor === 'MITSUBISHI') {
-                            document.getElementById('protecaoMitsubishiRow').style.display = 'block';
-                        }
-                    }
-                    if (dadosNormalizados.protecaoMitsubishi) document.getElementById('protecaoMitsubishi').value = dadosNormalizados.protecaoMitsubishi;
-                    if (dadosNormalizados.distancia) document.getElementById('distanciaInstalacao').value = dadosNormalizados.distancia;
-                    
-                    // Atualizar especificações
-                    atualizarEspecificacoes();
-                    
-                    // Mostrar aviso
-                    setTimeout(() => {
-                        mostrarStatus('✅ Dados carregados! Complete o checklist, registre as fotos e colete as assinaturas.', 'success');
-                    }, 500);
-                    
-                } catch (e) {
-                    console.error('Erro ao carregar dados da URL:', e);
                 }
+
+                // Mapeamento chave-curta → id do campo
+                const map = {c:'cliente',j:'cnpj',n:'contato',t:'telefone',e:'email',f:'nf',m:'modelo',v:'tensao',i:'marcaInversor',p:'protecaoMitsubishi',d:'distanciaInstalacao'};
+                Object.entries(dados).forEach(([k, v]) => {
+                    const id = map[k];
+                    if (id && v) {
+                        const el = document.getElementById(id);
+                        if (el) el.value = v;
+                    }
+                });
+
+                if (dados.m) atualizarMarcasInversor(dados.m);
+                const isLinha5000Flex = dados.m && dados.m.startsWith('SRP5') && dados.m.includes('FLEX');
+                if (isLinha5000Flex && dados.i === 'MITSUBISHI') {
+                    document.getElementById('protecaoMitsubishiRow').style.display = 'block';
+                }
+
+                atualizarEspecificacoes();
+                setTimeout(() => {
+                    mostrarStatus('✅ Dados carregados! Complete o checklist, registre as fotos e assine.', 'success');
+                }, 500);
+
+            } catch (e) {
+                console.error('Erro ao carregar dados da URL:', e);
             }
         }
 
@@ -4459,8 +4674,14 @@ LUAT Air Center
                 function stopDrawing() {
                     if (isDrawing) {
                         isDrawing = false;
-                        // Salvar assinatura
                         assinaturasData[tipo] = canvas.toDataURL('image/png');
+                        // Ativar FAB após assinatura
+                        if (tipo === 'Cliente') {
+                            const fab = document.getElementById('fabEnviar');
+                            if (fab) { fab.style.display = 'flex'; fab.classList.add('visible'); }
+                            // Marcar seção 6 como concluída na barra de progresso
+                            ativarPasso(6, true);
+                        }
                     }
                 }
                 
@@ -4715,6 +4936,160 @@ _PDF em anexo._`;
             window.open(`https://wa.me/${telefone}?text=${mensagem}`, '_blank');
         }
 
+        // ==========================================
+        // SPRINT 1 — MELHORIAS UX
+        // ==========================================
+
+        // --- 0. Compressão de imagens (Canvas API, sem biblioteca) ---
+        function comprimirImagem(base64, callback) {
+            const img = new Image();
+            img.onload = function() {
+                const MAX_W = 1400;
+                const scale = Math.min(1, MAX_W / img.width);
+                const canvas = document.createElement('canvas');
+                canvas.width  = Math.round(img.width  * scale);
+                canvas.height = Math.round(img.height * scale);
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL('image/jpeg', 0.82));
+            };
+            img.onerror = function() { callback(base64); }; // fallback se falhar
+            img.src = base64;
+        }
+
+        // --- 1. Máscaras de campo ---
+        function mascaraCNPJ(v) {
+            v = v.replace(/\D/g,'').slice(0,14);
+            if (v.length > 12) return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,'$1.$2.$3/$4-$5');
+            if (v.length > 8)  return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})/,'$1.$2.$3/$4');
+            if (v.length > 5)  return v.replace(/(\d{2})(\d{3})(\d{3})/,'$1.$2.$3');
+            if (v.length > 2)  return v.replace(/(\d{2})(\d{3})/,'$1.$2');
+            return v;
+        }
+        function mascaraTelefone(v) {
+            v = v.replace(/\D/g,'').slice(0,11);
+            if (v.length === 11) return v.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3');
+            if (v.length === 10) return v.replace(/(\d{2})(\d{4})(\d{4})/,'($1) $2-$3');
+            if (v.length > 6)   return v.replace(/(\d{2})(\d{4,5})(\d{0,4})/,'($1) $2-$3');
+            if (v.length > 2)   return v.replace(/(\d{2})(\d+)/,'($1) $2');
+            return v;
+        }
+        function mascaraCPF(v) {
+            v = v.replace(/\D/g,'').slice(0,11);
+            if (v.length > 9) return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+            if (v.length > 6) return v.replace(/(\d{3})(\d{3})(\d{3})/,'$1.$2.$3');
+            if (v.length > 3) return v.replace(/(\d{3})(\d+)/,'$1.$2');
+            return v;
+        }
+        function aplicarMascara(id, fn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function(e) {
+                const pos = this.selectionStart;
+                const antes = this.value.length;
+                this.value = fn(this.value);
+                const depois = this.value.length;
+                this.setSelectionRange(pos + (depois - antes), pos + (depois - antes));
+            });
+        }
+
+        // --- 2. Barra de progresso (IntersectionObserver) ---
+        function ativarPasso(n, done) {
+            for (let i = 1; i <= 6; i++) {
+                const s = document.getElementById('step' + i);
+                if (!s) continue;
+                s.classList.remove('active', 'done');
+                if (i < n) s.classList.add('done');
+                else if (i === n) s.classList.add(done ? 'done' : 'active');
+            }
+        }
+
+        function initProgressBar() {
+            const sections = [
+                document.getElementById('cardSection1'),
+                document.getElementById('specsCard'),
+                document.getElementById('cardSection3'),
+                document.getElementById('cardSection4'),
+                document.getElementById('cardSection5'),
+                document.getElementById('cardSection6'),
+            ];
+            const sticky = document.getElementById('progressBarSticky');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const idx = sections.indexOf(entry.target);
+                        if (idx >= 0) ativarPasso(idx + 1, false);
+                    }
+                });
+            }, { rootMargin: '-40% 0px -40% 0px' });
+            sections.forEach(s => { if (s) observer.observe(s); });
+        }
+
+        // --- 3. Feedback seção checklist concluída ---
+        function verificarChecklistCompleto() {
+            const total   = document.querySelectorAll('#checklistGrid .check-item input').length;
+            const marcados = document.querySelectorAll('#checklistGrid .check-item input:checked').length;
+            const header = document.querySelector('#cardSection3 .card-header');
+            if (!header) return;
+            const badgeExist = header.querySelector('.section-done-badge');
+            if (marcados === total && total > 0) {
+                header.classList.add('section-done');
+                if (!badgeExist) {
+                    const badge = document.createElement('span');
+                    badge.className = 'section-done-badge';
+                    badge.innerHTML = '✓ Concluído';
+                    header.appendChild(badge);
+                    mostrarStatus('✅ Checklist 8/8 concluído!', 'success');
+                }
+                ativarPasso(3, true);
+            } else {
+                header.classList.remove('section-done');
+                if (badgeExist) badgeExist.remove();
+            }
+        }
+
+        // --- 4. Autosave a cada 30s ---
+        let autosaveTimer = null;
+        function iniciarAutosave() {
+            autosaveTimer = setInterval(() => {
+                try {
+                    const dados = coletarDadosFormulario();
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
+                    const hora = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+                    const ind = document.getElementById('autosaveIndicator');
+                    if (ind) {
+                        ind.textContent = '💾 Salvo às ' + hora;
+                        ind.classList.add('visible');
+                        clearTimeout(ind._hide);
+                        ind._hide = setTimeout(() => ind.classList.remove('visible'), 2500);
+                    }
+                } catch(e) {}
+            }, 30000);
+        }
+
+        // --- 5. Lightbox para revisão de fotos ---
+        function abrirLightboxFoto(src, tipo, nomeFoto) {
+            const ov = document.createElement('div');
+            ov.className = 'lightbox-overlay';
+            ov.id = 'lightboxFoto';
+            ov.innerHTML = `
+                <span class="lightbox-titulo">📷 ${nomeFoto}</span>
+                <img src="${src}" alt="${nomeFoto}">
+                <div class="lightbox-btns">
+                    <button class="lightbox-btn lightbox-btn-refazer" onclick="removerFotoLightbox('${tipo}')">🔄 Refazer</button>
+                    <button class="lightbox-btn lightbox-btn-ok"     onclick="fecharLightbox()">✅ OK, ficou bom</button>
+                </div>`;
+            document.body.appendChild(ov);
+        }
+        function fecharLightbox() {
+            const lb = document.getElementById('lightboxFoto');
+            if (lb) lb.remove();
+        }
+        function removerFotoLightbox(tipo) {
+            fecharLightbox();
+            removerFoto(tipo);
+        }
+
         // Inicialização
         (function init() {
             // Gerar e exibir protocolo
@@ -4733,10 +5108,21 @@ _PDF em anexo._`;
 
             // Set default date input
             document.getElementById('data').valueAsDate = new Date();
-            
+
+            // Sprint 1: máscaras de campo
+            aplicarMascara('cnpj', mascaraCNPJ);
+            aplicarMascara('telefone', mascaraTelefone);
+            aplicarMascara('cpfCliente', mascaraCPF);
+
+            // Sprint 1: barra de progresso
+            initProgressBar();
+
+            // Sprint 1: autosave
+            iniciarAutosave();
+
             // Inicializar assinaturas digitais
             setTimeout(initAssinaturas, 100);
-            
+
             // Carregar dados da URL se existirem
             carregarDadosURL();
         })();
