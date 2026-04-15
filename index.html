@@ -4520,37 +4520,46 @@
             // Encurtar URL com TinyURL em paralelo
             encurtarURL(urlCompartilhamento).then(urlCurta => {
                 if (urlCurta && urlCurta !== urlCompartilhamento) {
-                    atualizarModalComLinkCurto(urlCurta, clienteNome, modeloTexto, tensaoTexto, dados);
+                    atualizarModalComLinkCurto(urlCurta);
+                } else {
+                    // Falhou ou deu timeout — mostrar link original de forma limpa
+                    atualizarModalComLinkCurto(null);
                 }
             });
         }
 
         async function encurtarURL(urlLonga) {
-            try {
-                // Usando is.gd API (gratuita, com CORS habilitado)
-                const response = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(urlLonga)}`);
-                if (response.ok) {
-                    const urlCurta = await response.text();
-                    if (urlCurta && urlCurta.startsWith('http')) {
-                        return urlCurta.trim();
-                    }
-                }
-            } catch (error) {
-                console.log('is.gd falhou, tentando v.gd...');
-                try {
-                    // Fallback para v.gd
-                    const response2 = await fetch(`https://v.gd/create.php?format=simple&url=${encodeURIComponent(urlLonga)}`);
-                    if (response2.ok) {
-                        const urlCurta2 = await response2.text();
-                        if (urlCurta2 && urlCurta2.startsWith('http')) {
-                            return urlCurta2.trim();
-                        }
-                    }
-                } catch (error2) {
-                    console.log('Não foi possível encurtar URL:', error2);
-                }
+            // Helper: fetch com timeout de 5 segundos
+            function fetchComTimeout(url, ms) {
+                return Promise.race([
+                    fetch(url),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))
+                ]);
             }
-            return null; // Retorna null se falhar
+
+            // Tentar is.gd com timeout de 5s
+            try {
+                const r = await fetchComTimeout(
+                    `https://is.gd/create.php?format=simple&url=${encodeURIComponent(urlLonga)}`, 5000
+                );
+                if (r.ok) {
+                    const txt = await r.text();
+                    if (txt && txt.startsWith('http')) return txt.trim();
+                }
+            } catch (_) {}
+
+            // Fallback: v.gd com timeout de 5s
+            try {
+                const r2 = await fetchComTimeout(
+                    `https://v.gd/create.php?format=simple&url=${encodeURIComponent(urlLonga)}`, 5000
+                );
+                if (r2.ok) {
+                    const txt2 = await r2.text();
+                    if (txt2 && txt2.startsWith('http')) return txt2.trim();
+                }
+            } catch (_) {}
+
+            return null; // Ambos falharam ou deram timeout
         }
 
         function mostrarModalCompartilhamento(clienteNome, modeloTexto, tensaoTexto, dados, urlCompartilhamento, urlCurta) {
@@ -4570,7 +4579,7 @@
 
             const statusLink = urlCurta 
                 ? `<span style="color: #4caf50;">✅ Link encurtado (${urlCurta.length} caracteres)</span>`
-                : `<span style="color: #ff9800;">⏳ Encurtando link...</span>`;
+                : `<span style="color: #6b7280;">📋 Copie o link abaixo</span>`;
 
             // Remover modal anterior se existir
             const modalAntigo = document.getElementById('modalCompartilhamento');
@@ -4634,23 +4643,24 @@
             document.body.appendChild(modal);
         }
 
-        function atualizarModalComLinkCurto(urlCurta, clienteNome, modeloTexto, tensaoTexto, dados) {
+        function atualizarModalComLinkCurto(urlCurta) {
             const inputLink = document.getElementById('linkCompartilhamento');
-            if (inputLink) {
+            if (!inputLink) return;
+
+            const labelEl = inputLink.parentElement.previousElementSibling;
+            const rodape  = inputLink.parentElement.nextElementSibling;
+
+            if (urlCurta) {
+                // Encurtamento bem-sucedido
                 inputLink.value = urlCurta;
                 inputLink.style.fontSize = '14px';
-                
-                // Atualizar label
-                const labelEl = inputLink.parentElement.previousElementSibling;
-                if (labelEl) {
-                    labelEl.innerHTML = `Link do Formulário <span style="color: #4caf50;">✅ Link encurtado (${urlCurta.length} caracteres)</span>`;
-                }
-
-                // Remover texto do link original
-                const nextEl = inputLink.parentElement.nextElementSibling;
-                if (nextEl && nextEl.style.fontSize === '11px') {
-                    nextEl.remove();
-                }
+                if (labelEl) labelEl.innerHTML = `Link do Formulário <span style="color:#4caf50;">✅ Link encurtado</span>`;
+                if (rodape)  rodape.remove();
+            } else {
+                // Falhou — exibir link original formatado
+                inputLink.style.fontSize = '11px';
+                if (labelEl) labelEl.innerHTML = `Link do Formulário <span style="color:#6b7280;">📋 Copie o link abaixo</span>`;
+                if (rodape)  rodape.remove();
             }
         }
 
