@@ -4704,6 +4704,22 @@
             return obj;
         }
 
+        // Comprime foto para incluir no link (menor resolução/qualidade)
+        function comprimirFotoParaLink(base64, callback) {
+            const img = new Image();
+            img.onload = function() {
+                const MAX_W = 600;
+                const scale = Math.min(1, MAX_W / img.width);
+                const canvas = document.createElement('canvas');
+                canvas.width  = Math.round(img.width * scale);
+                canvas.height = Math.round(img.height * scale);
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL('image/jpeg', 0.35).replace(/^data:image\/jpeg;base64,/, ''));
+            };
+            img.onerror = function() { callback(null); };
+            img.src = base64;
+        }
+
         function gerarLinkCompartilhamento() {
             const dados = {
                 c: document.getElementById('cliente').value.trim(),
@@ -4728,22 +4744,44 @@
 
             // Gerar URL com parâmetro curto
             const urlAtual = window.location.href.split('?')[0].split('#')[0];
-            const urlCompartilhamento = `${urlAtual}?d=${dadosBase64}`;
+            const urlBase = `${urlAtual}?d=${dadosBase64}`;
 
             // Preparar dados para o modal
             const modeloTexto = document.getElementById('modelo').selectedOptions[0]?.text || dados.m || '';
             const tensaoTexto = dados.v ? `${dados.v}V` : '';
             const clienteNome = dados.c || 'A definir';
 
-            // Mostrar modal com loading
-            mostrarModalCompartilhamento(clienteNome, modeloTexto, tensaoTexto, dados, urlCompartilhamento, null);
+            const temNF = fotosData && fotosData.notafiscal && fotosData.notafiscal.base64;
 
-            // Encurtar URL com TinyURL em paralelo
-            encurtarURL(urlCompartilhamento).then(urlCurta => {
-                if (urlCurta && urlCurta !== urlCompartilhamento) {
-                    atualizarModalComLinkCurto(urlCurta, clienteNome, modeloTexto, tensaoTexto, dados);
-                }
-            });
+            // Mostrar modal com loading
+            mostrarModalCompartilhamento(clienteNome, modeloTexto, tensaoTexto, dados, urlBase, null);
+
+            if (temNF) {
+                // Comprimir NF e adicionar ao link
+                comprimirFotoParaLink(fotosData.notafiscal.base64, function(nfB64) {
+                    const urlComNF = nfB64 ? `${urlBase}&nf=${encodeURIComponent(nfB64)}` : urlBase;
+                    // Atualizar modal com URL final (com NF)
+                    const inputLink = document.getElementById('linkCompartilhamento');
+                    if (inputLink) inputLink.value = urlComNF;
+                    // Tentar encurtar (URLs longas vão falhar no is.gd, mas tentamos)
+                    encurtarURL(urlComNF).then(urlCurta => {
+                        if (urlCurta && urlCurta !== urlComNF) {
+                            atualizarModalComLinkCurto(urlCurta, clienteNome, modeloTexto, tensaoTexto, dados);
+                        } else {
+                            // Mostrar aviso de URL longa com NF incluída
+                            const statusEl = document.querySelector('#modalCompartilhamento [style*="Encurtando"]');
+                            if (statusEl) statusEl.innerHTML = '<span style="color:#4caf50;">✅ NF incluída no link (URL longa — use "Copiar")</span>';
+                        }
+                    });
+                });
+            } else {
+                // Sem NF: encurtar normalmente
+                encurtarURL(urlBase).then(urlCurta => {
+                    if (urlCurta && urlCurta !== urlBase) {
+                        atualizarModalComLinkCurto(urlCurta, clienteNome, modeloTexto, tensaoTexto, dados);
+                    }
+                });
+            }
         }
 
         async function encurtarURL(urlLonga) {
@@ -4971,8 +5009,27 @@ LUAT Air Center
                 }
 
                 atualizarEspecificacoes();
+
+                // Restaurar foto da NF se presente no link (&nf=...)
+                const nfParam = urlParams.get('nf');
+                if (nfParam) {
+                    try {
+                        const nfBase64 = 'data:image/jpeg;base64,' + nfParam;
+                        fotosData['notafiscal'] = { base64: nfBase64, name: 'nota_fiscal.jpg', size: 0, type: 'image/jpeg' };
+                        const preview = document.getElementById('previewNotafiscal');
+                        if (preview) {
+                            preview.innerHTML = `<img src="${nfBase64}" alt="Nota Fiscal" style="cursor:pointer;" onclick="abrirLightboxFoto('${nfBase64}','notafiscal','Nota Fiscal')">`;
+                            preview.classList.add('has-photo');
+                            const item = preview.closest('.photo-upload-item');
+                            if (item) item.classList.add('has-photo');
+                            atualizarContadorFotos();
+                        }
+                    } catch(eNF) { console.warn('Erro ao restaurar NF:', eNF); }
+                }
+
                 setTimeout(() => {
-                    mostrarStatus('✅ Dados carregados! Complete o checklist, registre as fotos e assine.', 'success');
+                    const msgNF = nfParam ? ' A foto da NF foi restaurada automaticamente.' : '';
+                    mostrarStatus('✅ Dados carregados! Complete o checklist, registre as fotos e assine.' + msgNF, 'success');
                 }, 500);
 
             } catch (e) {
