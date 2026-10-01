@@ -4994,20 +4994,32 @@ LUAT Air Center
 
                 // Mapeamento chave-curta → id do campo
                 const map = {c:'cliente',j:'cnpj',n:'contato',t:'telefone',e:'email',f:'nf',m:'modelo',v:'tensao',i:'marcaInversor',p:'protecaoMitsubishi',d:'distanciaInstalacao'};
-                Object.entries(dados).forEach(([k, v]) => {
+
+                // 1ª passagem: campos de texto + modelo + tensão (não dependem de outros selects)
+                ['c','j','n','t','e','f','m','v','p','d'].forEach(k => {
                     const id = map[k];
+                    const v = dados[k];
                     if (id && v) {
                         const el = document.getElementById(id);
                         if (el) el.value = v;
                     }
                 });
 
+                // Popula as opções de marcaInversor de acordo com o modelo
                 if (dados.m) atualizarMarcasInversor(dados.m);
+
+                // 2ª passagem: definir marcaInversor APÓS as opções serem populadas
+                if (dados.i) {
+                    const elInv = document.getElementById('marcaInversor');
+                    if (elInv) elInv.value = dados.i;
+                }
+
                 const isLinha5000Flex = dados.m && dados.m.startsWith('SRP5') && dados.m.includes('FLEX');
                 if (isLinha5000Flex && dados.i === 'MITSUBISHI') {
                     document.getElementById('protecaoMitsubishiRow').style.display = 'block';
                 }
 
+                // Recalcula especificações (cabos, fusíveis, etc.) com modelo+tensão+inversor corretos
                 atualizarEspecificacoes();
 
                 // Restaurar foto da NF se presente no link (&nf=...)
