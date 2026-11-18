@@ -5245,6 +5245,39 @@ LUAT Air Center
             }
         }
         
+        // ===== SUPABASE: envio direto para a LUAT (dados + fotos + assinatura) =====
+        const SUPABASE_ENTREGA_URL = 'https://vlyqjbumonybdevtqrzj.supabase.co/functions/v1/receber-entrega-tecnica';
+
+        async function enviarParaSupabase(dadosSheets) {
+            try {
+                const completo = coletarDadosFormulario();
+                const dados = Object.assign({}, completo.campos, dadosSheets, {
+                    protocolo: completo.protocolo,
+                    dataHora: completo.dataHora,
+                    checklist: completo.checkboxes.checklist,
+                    checklistFotos: completo.checkboxes.fotos
+                });
+                const fotos = {};
+                Object.keys(fotosData || {}).forEach(k => {
+                    if (fotosData[k] && fotosData[k].base64) fotos[k] = fotosData[k].base64;
+                });
+                const ass = assinaturasData && assinaturasData.Cliente;
+                if (typeof ass === 'string' && ass.indexOf('data:image/') === 0) fotos['assinatura_cliente'] = ass;
+
+                const resp = await fetch(SUPABASE_ENTREGA_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dados, fotos })
+                });
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                const r = await resp.json();
+                return !!r.ok;
+            } catch (e) {
+                console.error('Erro ao enviar para Supabase:', e);
+                return false;
+            }
+        }
+
         async function enviarParaLUAT() {
             // Validar campos mínimos
             const nomeCliente = document.getElementById('nomeCliente').value;
@@ -5269,6 +5302,9 @@ LUAT Air Center
 
             // Enviar para Google Sheets (em segundo plano)
             enviarParaGoogleSheets(dados);
+
+            // Enviar dados + fotos para o Supabase da LUAT
+            const salvoNaLuat = await enviarParaSupabase(dados);
             
             // Preparar mensagem para WhatsApp
             const protocolo = dados.protocolo;
@@ -5310,7 +5346,9 @@ _PDF em anexo._`;
                         </div>
                         <div class="modal-body">
                             <p style="margin-bottom: 16px; color: #666;">
-                                ✅ Dados registrados com sucesso! Agora gere o PDF e envie para a LUAT:
+                                ${salvoNaLuat
+                                    ? '✅ <strong>Dados e fotos enviados para a LUAT com sucesso!</strong> Se quiser, gere também o PDF:'
+                                    : '⚠️ Não foi possível enviar automaticamente (verifique a internet e tente novamente). Enquanto isso, gere o PDF e envie para a LUAT:'}
                             </p>
                             
                             <div class="envio-opcoes">
@@ -5361,7 +5399,7 @@ _PDF em anexo._`;
             window.mensagemEnvio = mensagem;
             window.dadosEnvio = dados;
             
-            mostrarStatus('✅ Dados registrados! Gere o PDF e envie para a LUAT.', 'success');
+            mostrarStatus(salvoNaLuat ? '✅ Enviado para a LUAT!' : '⚠️ Envio automático falhou. Gere o PDF e envie.', salvoNaLuat ? 'success' : 'error');
         }
         
         function fecharModalEnvio(event) {
