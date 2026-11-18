@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Entrega Técnica - LUAT</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#f3f4f6;color:#111827}
+  header{background:#0f2a4a;color:#fff;padding:16px 20px}
+  header h1{margin:0;font-size:18px}
+  header small{opacity:.75}
+  main{max-width:980px;margin:0 auto;padding:16px}
+  .card{background:#fff;border-radius:10px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .card h2{margin:0 0 12px;font-size:15px;color:#0f2a4a;border-bottom:2px solid #e5e7eb;padding-bottom:8px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  td,th{padding:7px 8px;text-align:left;border-bottom:1px solid #f0f0f0;vertical-align:top}
+  th{width:34%;color:#4b5563;font-weight:600}
+  .fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .fotos figure{margin:0}
+  .fotos img{width:100%;border-radius:8px;border:1px solid #e5e7eb;cursor:zoom-in;background:#fafafa}
+  .fotos figcaption{font-size:12px;color:#4b5563;margin-top:4px;text-transform:capitalize}
+  a{color:#0b5cad}
+  .msg{padding:40px 16px;text-align:center;color:#6b7280}
+  .btn{display:inline-block;padding:9px 14px;background:#0f2a4a;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;border:0;cursor:pointer}
+  @media print{header .btn,.noprint{display:none}body{background:#fff}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>LUAT Air Center — Entrega Técnica</h1>
+  <small id="sub"></small>
+</header>
+<main id="root"><div class="msg">Carregando…</div></main>
+<script>
+(function(){
+  var API = 'https://vlyqjbumonybdevtqrzj.supabase.co/functions/v1/consultar-entrega-tecnica';
+  var root = document.getElementById('root');
+  var q = new URLSearchParams(location.search);
+  var id = q.get('id'), k = q.get('k');
+
+  var ROTULOS = {
+    protocolo:'Protocolo', dataHora:'Enviado em', cliente:'Cliente', cnpj:'CNPJ', contato:'Contato', telefone:'Telefone',
+    email:'E-mail', nf:'Nota fiscal', modelo:'Modelo', tensao:'Tensão (V)', marcaInversor:'Inversor',
+    protecaoMitsubishi:'Proteção Mitsubishi', distanciaInstalacao:'Distância da instalação (m)', data:'Data', local:'Local',
+    nomeCliente:'Responsável', cargoCliente:'Cargo', cpfCliente:'CPF', nomeTecnico:'Técnico', matriculaTecnico:'Matrícula',
+    tipoAcionamento:'Acionamento', protecaoEntrada:'Proteção de entrada', correnteNominal:'Corrente nominal', fusivel:'Fusível',
+    distancia:'Distância', caboFase:'Cabo fase', caboTerra:'Cabo terra', checklistCompleto:'Checklist', fotosAdicionadas:'Fotos',
+    assinaturaCliente:'Assinatura do cliente', obsSecao1:'Obs. seção 1', obsSecao3:'Obs. seção 3', obsSecao4:'Obs. seção 4', obsSecao5:'Obs. seção 5'
+  };
+  var IGNORAR = {notaFiscal:1,dataGeracao:1,dataAssinatura:1,status:1,assinaturaTecnico:1,checklist:1,checklistFotos:1};
+
+  function el(tag, txt, cls){ var e=document.createElement(tag); if(txt!=null) e.textContent=txt; if(cls) e.className=cls; return e; }
+  function msg(t){ root.innerHTML=''; root.appendChild(el('div',t,'msg')); }
+  function fmt(d){ try{ return new Date(d).toLocaleString('pt-BR'); }catch(e){ return d; } }
+
+  function render(e){
+    root.innerHTML='';
+    document.getElementById('sub').textContent = 'Recebido em ' + fmt(e.created_at);
+    var d = e.dados || {};
+
+    var c1 = el('div',null,'card'); c1.appendChild(el('h2','Dados da entrega'));
+    var t = el('table');
+    Object.keys(ROTULOS).forEach(function(key){
+      var v = d[key]; if(key==='dataHora' && v) v = fmt(v);
+      if(v===undefined || v===null || v==='') return;
+      var tr = el('tr'); tr.appendChild(el('th',ROTULOS[key])); tr.appendChild(el('td',String(v))); t.appendChild(tr);
+    });
+    Object.keys(d).forEach(function(key){
+      if(ROTULOS[key] || IGNORAR[key]) return;
+      var v = d[key]; if(v===null || v==='' || typeof v==='object') return;
+      var tr = el('tr'); tr.appendChild(el('th',key)); tr.appendChild(el('td',String(v))); t.appendChild(tr);
+    });
+    c1.appendChild(t); root.appendChild(c1);
+
+    if(Array.isArray(d.checklist) && d.checklist.length){
+      var c2 = el('div',null,'card'); c2.appendChild(el('h2','Checklist'));
+      c2.appendChild(el('div', d.checklist.filter(Boolean).length + ' de ' + d.checklist.length + ' itens marcados'));
+      root.appendChild(c2);
+    }
+
+    var nomes = Object.keys(e.fotos||{});
+    var c3 = el('div',null,'card'); c3.appendChild(el('h2','Fotos e assinatura (' + nomes.length + ')'));
+    if(!nomes.length){ c3.appendChild(el('div','Nenhuma foto enviada.')); }
+    else {
+      var g = el('div',null,'fotos');
+      nomes.forEach(function(n){
+        var f = el('figure'); var a = el('a'); a.href = e.fotos[n]; a.target='_blank'; a.rel='noopener';
+        var im = el('img'); im.src = e.fotos[n]; im.alt = n; im.loading='lazy'; a.appendChild(im);
+        f.appendChild(a); f.appendChild(el('figcaption', n.replace(/[_-]+/g,' '))); g.appendChild(f);
+      });
+      c3.appendChild(g);
+    }
+    root.appendChild(c3);
+
+    var p = el('div',null,'noprint'); var b = el('button','Imprimir / salvar PDF','btn'); b.onclick=function(){window.print();};
+    p.appendChild(b); root.appendChild(p);
+  }
+
+  function renderLista(items){
+    root.innerHTML='';
+    document.getElementById('sub').textContent = items.length + ' entrega(s) recebida(s)';
+    var c = el('div',null,'card'); c.appendChild(el('h2','Entregas recebidas'));
+    if(!items.length){ c.appendChild(el('div','Nenhuma entrega ainda.')); }
+    else {
+      var t = el('table'); var h = el('tr');
+      ['Recebida em','Cliente','Modelo','Tensão',''].forEach(function(x){ var th=el('th',x); th.style.width='auto'; h.appendChild(th); });
+      t.appendChild(h);
+      items.forEach(function(i){
+        var tr = el('tr');
+        tr.appendChild(el('td',fmt(i.created_at))); tr.appendChild(el('td',i.cliente||'')); tr.appendChild(el('td',i.modelo||'')); tr.appendChild(el('td',i.tensao||''));
+        var td = el('td'); var a = el('a','Abrir'); a.href='?id='+encodeURIComponent(i.id); td.appendChild(a); tr.appendChild(td);
+        t.appendChild(tr);
+      });
+      c.appendChild(t);
+    }
+    root.appendChild(c);
+  }
+
+  var url = id ? API + '?id=' + encodeURIComponent(id) : (k ? API + '?k=' + encodeURIComponent(k) : null);
+  if(!url){ msg('Link inválido. Use o link recebido pelo WhatsApp.'); return; }
+  fetch(url).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); }).then(function(x){
+    if(!x.ok || !x.j.ok){ msg(x.j && x.j.error==='nao_autorizado' ? 'Acesso não autorizado.' : 'Entrega não encontrada.'); return; }
+    if(x.j.entrega) render(x.j.entrega); else renderLista(x.j.entregas||[]);
+  }).catch(function(){ msg('Não foi possível carregar. Verifique a internet e tente novamente.'); });
+})();
+</script>
+</body>
+</html>
